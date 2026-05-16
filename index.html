@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Poker Hand Trainer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🃏 ポーカーハンドトレーナー</h1>
+      <div class="actions">
+        <button id="btn-random-flop">ランダム盤面 (フロップ)</button>
+        <button id="btn-random-turn">ターン</button>
+        <button id="btn-random-river">リバー</button>
+        <button id="btn-reset" class="ghost">リセット</button>
+      </div>
+    </header>
+
+    <section class="board-row">
+      <div class="slot-group">
+        <div class="slot-label">あなたの手札</div>
+        <div class="slots" id="hero-slots"></div>
+      </div>
+      <div class="slot-group board">
+        <div class="slot-label">ボード</div>
+        <div class="slots" id="board-slots"></div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats">
+      <div class="stats-empty">カードを 2 + 3 枚以上選んでください</div>
+    </section>
+
+    <section class="picker">
+      <div class="section-title">カードを選ぶ</div>
+      <div id="card-picker"></div>
+    </section>
+
+    <section class="matrix-section">
+      <div class="section-header">
+        <div class="section-title">相手のハンド可能性 (13 × 13)</div>
+        <div class="controls">
+          <label>
+            モード
+            <select id="mode-select">
+              <option value="auto">自動色付け</option>
+              <option value="mark">自分でマーク (クリックで開示)</option>
+            </select>
+          </label>
+          <label>
+            絞り込み
+            <select id="filter-select">
+              <option value="all">すべて</option>
+              <option value="win">自分が勝つコンボ</option>
+              <option value="lose">自分が負けるコンボ</option>
+              <option value="tie">引分</option>
+              <option value="cat-8">ストレートフラッシュ</option>
+              <option value="cat-7">フォーカード</option>
+              <option value="cat-6">フルハウス</option>
+              <option value="cat-5">フラッシュ</option>
+              <option value="cat-4">ストレート</option>
+              <option value="cat-3">スリーカード</option>
+              <option value="cat-2">ツーペア</option>
+              <option value="cat-1">ワンペア</option>
+              <option value="cat-0">ハイカード</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="matrix-wrap">
+        <table id="matrix"></table>
+        <div class="legend">
+          <span class="lg lg-win"></span> 勝ち
+          <span class="lg lg-tie"></span> 引分
+          <span class="lg lg-lose"></span> 負け
+          <span class="lg lg-mixed"></span> 混在 (クリックで詳細)
+        </div>
+      </div>
+
+      <div class="combo-detail" id="combo-detail">
+        <div class="hint">マトリクスのセルをクリックすると、そのハンドクラスの個別コンボが表示されます。</div>
+      </div>
+    </section>
+
+    <footer>
+      <span>vs ランダム 1 ハンド・全コンボ列挙</span>
+      <span class="dot">·</span>
+      <span>フロップ勝率は Monte Carlo 8k samples</span>
+    </footer>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
