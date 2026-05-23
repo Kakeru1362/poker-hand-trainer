@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>レンジ記憶ドリル — Poker Trainer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🎴 レンジ記憶ドリル</h1>
+      <nav class="nav">
+        <a href="index.html">ハンドトレーナー</a>
+        <a href="quiz.html">エクイティ推定</a>
+        <a href="drill.html" class="active">レンジ記憶</a>
+      </nav>
+    </header>
+
+    <section class="drill-bar">
+      <label>
+        ポジション
+        <select id="pos-select">
+          <option value="ALL">全部 (ランダム)</option>
+          <option value="UTG_OPEN">UTG のみ</option>
+          <option value="HJ_OPEN">HJ のみ</option>
+          <option value="CO_OPEN">CO のみ</option>
+          <option value="BTN_OPEN">BTN のみ</option>
+          <option value="SB_OPEN">SB のみ</option>
+        </select>
+      </label>
+      <label class="weight-toggle">
+        <input type="checkbox" id="weight-toggle" checked />
+        苦手ハンド優先
+      </label>
+      <button id="btn-reset-stats" class="ghost">スコアをリセット</button>
+    </section>
+
+    <section class="drill-main">
+      <div class="drill-question">
+        <div class="position-badge" id="position-badge">BTN</div>
+        <div class="hand-display" id="hand-display"></div>
+        <div class="question-text">このハンドを<strong>オープン</strong>しますか？</div>
+        <div class="drill-buttons">
+          <button id="btn-open" class="drill-btn open">オープン</button>
+          <button id="btn-fold" class="drill-btn fold">フォールド</button>
+        </div>
+      </div>
+
+      <div class="drill-result" id="drill-result" hidden>
+        <div class="result-banner" id="result-banner"></div>
+        <div class="result-info">
+          <div class="hand-class-label">
+            <span id="class-display"></span>
+            <span class="result-verdict" id="verdict-display"></span>
+          </div>
+          <div class="result-note" id="result-note"></div>
+        </div>
+        <table class="range-mat drill-mat" id="drill-mat"></table>
+        <button id="btn-next" class="primary">次へ ▶</button>
+      </div>
+    </section>
+
+    <section class="stats-panel">
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <div class="stat-lbl">解答数</div>
+          <div class="stat-val" id="stat-total">0</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl">正解率</div>
+          <div class="stat-val" id="stat-acc">-</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl">連続正解</div>
+          <div class="stat-val" id="stat-streak">0</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl">最長連続</div>
+          <div class="stat-val" id="stat-best">0</div>
+        </div>
+      </div>
+
+      <details class="trouble-section">
+        <summary>苦手ハンド TOP 10</summary>
+        <table class="trouble-table" id="trouble-table"></table>
+      </details>
+
+      <details class="position-section">
+        <summary>ポジション別 正解率</summary>
+        <table class="position-table" id="position-table"></table>
+      </details>
+    </section>
+
+    <footer>
+      <span>スコアはこのブラウザの localStorage に保存されます</span>
+      <span class="dot">·</span>
+      <span>レンジは GTO 近似</span>
+    </footer>
+
+    <script type="module" src="src/drill.js"></script>
+  </body>
+</html>

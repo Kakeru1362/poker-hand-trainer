@@ -1,4 +1,4 @@
-import { parseRange, comboClassLabel, parseBoardStr, PRESET_RANGES } from '../src/range.js';
+import { parseRange, comboClassLabel, parseBoardStr, rangeClassSet, randomHand, PRESET_RANGES } from '../src/range.js';
 import { computeRangeVsRangeEquity } from '../src/equity.js';
 
 let pass = 0, fail = 0;
@@ -107,6 +107,26 @@ const eqBtnWet = computeRangeVsRangeEquity(btn, bbVsBtn, wet, 8000);
 const btnWetPct = eqBtnWet.equity * 100;
 assert(`BTN vs BB on 876 should be near 50% (45-55%): got ${btnWetPct.toFixed(1)}%`,
   btnWetPct > 45 && btnWetPct < 55, `${btnWetPct.toFixed(1)}%`);
+
+// --- rangeClassSet ---
+const utgSet = rangeClassSet(PRESET_RANGES.UTG_OPEN.notation);
+assert('UTG set includes AA', utgSet.has('AA'));
+assert('UTG set includes ATs', utgSet.has('ATs'));
+assert('UTG set excludes A2o', !utgSet.has('A2o'));
+assert('UTG set excludes 72o', !utgSet.has('72o'));
+
+const btnSet = rangeClassSet(PRESET_RANGES.BTN_OPEN.notation);
+assert('BTN set includes 72s (very wide BTN open)', btnSet.has('72s') || btnSet.has('73s') || btnSet.has('74s'),
+  'expected some 7Xs to be in BTN');
+assert('BTN set excludes 32o (junk should fold even on BTN)', !btnSet.has('32o'));
+
+// --- randomHand ---
+for (let i = 0; i < 50; i++) {
+  const h = randomHand();
+  assert(`randomHand[${i}] has 2 distinct cards`,
+    !(h[0].rank === h[1].rank && h[0].suit === h[1].suit),
+    `${JSON.stringify(h)}`);
+}
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail > 0 ? 1 : 0);

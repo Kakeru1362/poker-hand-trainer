@@ -135,6 +135,15 @@ export function comboClassLabel([a, b]) {
   return `${RANK_LABELS[high.rank]}${RANK_LABELS[low.rank]}${suited}`;
 }
 
+// Return the set of class labels ("AA", "AKs", "AKo") that appear at least once in the range.
+// Useful for "is this hand in the range?" lookups in the drill.
+export function rangeClassSet(rangeStr) {
+  const combos = parseRange(rangeStr);
+  const set = new Set();
+  for (const c of combos) set.add(comboClassLabel(c));
+  return set;
+}
+
 // Build a 13x13 frequency map (class -> fraction of all suit combos in the range).
 // Returns { [classKey]: { selected: N, total: M, ratio: N/M } }.
 // classKey format matches comboClassLabel (e.g., "AA", "AKs", "AKo").
@@ -269,6 +278,17 @@ export const QUIZ_SCENARIOS = [
     note: 'ローペアドボード。UTG のオーバーペア多数 → 圧倒的にレンジ有利。',
   },
 ];
+
+// Generate a random 2-card hand (no duplicates).
+export function randomHand() {
+  const a = Math.floor(Math.random() * 52);
+  let b;
+  do { b = Math.floor(Math.random() * 52); } while (b === a);
+  return [
+    { rank: 2 + Math.floor(a / 4), suit: a % 4 },
+    { rank: 2 + Math.floor(b / 4), suit: b % 4 },
+  ];
+}
 
 // Parse a board string like "As Kd 2c" or "Th 9d 5c 8s" into card objects.
 export function parseBoardStr(str) {
