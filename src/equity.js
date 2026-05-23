@@ -136,3 +136,69 @@ function sampleIndices(n, k) {
   }
   return out;
 }
+
+// Range vs Range equity via Monte Carlo.
+// - heroRange / villainRange: arrays of 2-card combos, [[c, c], ...]
+// - board: 0, 3, 4, or 5 community cards
+// - mcIter: target iterations (skipped iterations from card conflicts don't count)
+// Returns { equity, samples, attempts }.
+// Strategy per iteration: pick a random hero combo and villain combo that don't
+// share cards with each other or with the board, then complete the board to the
+// river, evaluate, accumulate win/tie. Loops with a max-attempt safety cap.
+export function computeRangeVsRangeEquity(heroRange, villainRange, board = [], mcIter = 20000) {
+  if (heroRange.length === 0 || villainRange.length === 0) {
+    return { equity: 0, samples: 0, attempts: 0 };
+  }
+  const boardKeys = new Set(board.map(cardKey));
+  let wins = 0;
+  let ties = 0;
+  let samples = 0;
+  let attempts = 0;
+  const maxAttempts = mcIter * 6; // safety bound for high-conflict ranges
+  const need = 5 - board.length;
+
+  while (samples < mcIter && attempts < maxAttempts) {
+    attempts++;
+    const hero = heroRange[(Math.random() * heroRange.length) | 0];
+    if (boardKeys.has(cardKey(hero[0])) || boardKeys.has(cardKey(hero[1]))) continue;
+    const villain = villainRange[(Math.random() * villainRange.length) | 0];
+    const vk1 = cardKey(villain[0]);
+    const vk2 = cardKey(villain[1]);
+    if (boardKeys.has(vk1) || boardKeys.has(vk2)) continue;
+    const h1 = cardKey(hero[0]);
+    const h2 = cardKey(hero[1]);
+    if (vk1 === h1 || vk1 === h2 || vk2 === h1 || vk2 === h2) continue;
+
+    // Build a dead-card set and draw `need` random cards from remaining deck.
+    const dead = new Set(boardKeys);
+    dead.add(h1); dead.add(h2); dead.add(vk1); dead.add(vk2);
+    const draws = drawCardsAvoiding(dead, need);
+    const fullBoard = board.concat(draws);
+
+    const he = evaluate([...hero, ...fullBoard]);
+    const ve = evaluate([...villain, ...fullBoard]);
+    if (he.rank > ve.rank) wins++;
+    else if (he.rank === ve.rank) ties++;
+    samples++;
+  }
+
+  return {
+    equity: samples > 0 ? (wins + ties / 2) / samples : 0,
+    samples,
+    attempts,
+  };
+}
+
+function drawCardsAvoiding(deadSet, count) {
+  if (count <= 0) return [];
+  const out = [];
+  const localDead = new Set(deadSet);
+  while (out.length < count) {
+    const c = ALL_CARDS[(Math.random() * ALL_CARDS.length) | 0];
+    const k = cardKey(c);
+    if (localDead.has(k)) continue;
+    localDead.add(k);
+    out.push(c);
+  }
+  return out;
+}

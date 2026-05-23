@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>レンジ vs レンジ クイズ — Poker Trainer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🎯 レンジ vs レンジ クイズ</h1>
+      <nav class="nav">
+        <a href="index.html">ハンドトレーナー</a>
+        <a href="quiz.html" class="active">エクイティ推定</a>
+      </nav>
+    </header>
+
+    <section class="quiz-intro">
+      <p>
+        ボードと両者のレンジを見て、<strong>自分（ヒーロー）のエクイティ</strong>が何%かを推定してください。
+        正解との誤差で採点されます。
+      </p>
+    </section>
+
+    <section class="scenario-bar">
+      <label>
+        シナリオ
+        <select id="scenario-select"></select>
+      </label>
+      <button id="btn-next">▶ 次のシナリオ</button>
+      <span class="score" id="score">解答 0 / 平均誤差 -</span>
+    </section>
+
+    <section class="quiz-main">
+      <div class="quiz-card hero">
+        <div class="quiz-card-header">
+          <span class="role-tag hero-tag">あなた</span>
+          <span id="hero-label" class="role-label"></span>
+          <span id="hero-count" class="combo-count"></span>
+        </div>
+        <table class="range-mat" id="hero-mat"></table>
+        <div class="range-notation" id="hero-notation"></div>
+      </div>
+
+      <div class="quiz-card villain">
+        <div class="quiz-card-header">
+          <span class="role-tag villain-tag">相手</span>
+          <span id="villain-label" class="role-label"></span>
+          <span id="villain-count" class="combo-count"></span>
+        </div>
+        <table class="range-mat" id="villain-mat"></table>
+        <div class="range-notation" id="villain-notation"></div>
+      </div>
+    </section>
+
+    <section class="board-display">
+      <div class="board-label">ボード</div>
+      <div class="board-cards" id="quiz-board"></div>
+      <div class="scenario-note" id="scenario-note"></div>
+    </section>
+
+    <section class="estimate-section">
+      <div class="section-title">あなたのエクイティ推定</div>
+      <div class="estimate-row">
+        <input type="range" id="estimate-slider" min="0" max="100" step="0.5" value="50" />
+        <div class="estimate-val"><span id="estimate-display">50.0</span>%</div>
+      </div>
+      <div class="estimate-actions">
+        <button id="btn-submit" class="primary">解答する</button>
+        <button id="btn-skip" class="ghost">スキップ</button>
+      </div>
+    </section>
+
+    <section class="result-section" id="result-section" hidden>
+      <div class="result-grid">
+        <div class="result-cell">
+          <div class="result-lbl">あなたの推定</div>
+          <div class="result-val" id="result-guess"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-lbl">正解 (MC)</div>
+          <div class="result-val" id="result-actual"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-lbl">誤差</div>
+          <div class="result-val" id="result-error"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-lbl">評価</div>
+          <div class="result-val" id="result-grade"></div>
+        </div>
+      </div>
+      <div class="result-detail" id="result-detail"></div>
+    </section>
+
+    <footer>
+      <span>レンジ vs レンジ Monte Carlo 20k iter</span>
+      <span class="dot">·</span>
+      <span>プリセットレンジは GTO 近似 (教育目的)</span>
+    </footer>
+
+    <script type="module" src="src/quiz.js"></script>
+  </body>
+</html>
