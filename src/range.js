@@ -156,40 +156,62 @@ function maxCombosForClass(label) {
   return label.endsWith('s') ? 4 : 12;
 }
 
-// ---- preset ranges (rough educational approximations of 100bb 6max GTO opens) ----
-// These are NOT exact solver ranges. Labelled "approx." in UI to set expectations.
+// ---- preset ranges: 6-max NLH 100bb GTO approximations ----
+// Synthesized from GTO Wizard public blog, Upswing Poker, PokerCoaching,
+// Beasts of Poker, and PokerStrategy. Each opener range is the RFI range.
+// Each "BB defend" range is the CALL portion ONLY (3bet hands go to a
+// different postflop node — single raised pot scenarios use the call range).
+//
+// Sources:
+//   https://blog.gtowizard.com/preflop-range-morphology/
+//   https://beastsofpoker.com/6-max-poker-strategy/
+//   https://upswingpoker.com/6-handed-max-poker-strategy/
+//   https://www.pokerstrategy.com/strategy/bss/utg-pre-flop-ranges/
+//   https://www.pokerstrategy.com/forum/thread.php?threadid=251901
+//
+// Mixed frequencies (e.g., "open 99 60% of the time") are rounded to pure
+// pure include/exclude for educational simplicity.
 export const PRESET_RANGES = {
   UTG_OPEN: {
-    label: 'UTG オープン (約 12%)',
-    notation: '77+, A9s+, KTs+, QTs+, JTs, T9s, AJo+, KQo',
+    label: 'UTG オープン (約 16%)',
+    notation: '22+, ATs+, KTs+, QTs+, J9s+, T9s, 98s, 87s, 76s, 65s, AJo+, KQo',
   },
   HJ_OPEN: {
-    label: 'HJ オープン (約 18%)',
-    notation: '55+, A7s+, K9s+, Q9s+, J9s+, T9s, 98s, ATo+, KJo+, QJo',
+    label: 'HJ オープン (約 20%)',
+    notation: '22+, A2s+, K9s+, Q9s+, J9s+, T9s, 98s, 87s, 76s, 65s, ATo+, KJo+, QJo',
   },
   CO_OPEN: {
-    label: 'CO オープン (約 27%)',
-    notation: '22+, A2s+, K8s+, Q9s+, J9s+, T8s+, 98s, 87s, 76s, A9o+, KTo+, QTo+, JTo',
+    label: 'CO オープン (約 28%)',
+    notation: '22+, A2s+, K7s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A8o+, KTo+, QTo+, JTo',
   },
   BTN_OPEN: {
-    label: 'BTN オープン (約 45%)',
-    notation: '22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 86s+, 75s+, 64s+, 53s+, A2o+, K8o+, Q9o+, J9o+, T8o+, 98o, 87o',
+    label: 'BTN オープン (約 47%)',
+    notation: '22+, A2s+, K2s+, Q4s+, J6s+, T6s+, 96s+, 85s+, 74s+, 64s+, 53s+, 43s, A2o+, K8o+, Q9o+, J9o+, T9o, 98o',
   },
   SB_OPEN: {
-    label: 'SB オープン (約 40%)',
-    notation: '22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 97s+, 86s+, 75s+, 64s+, A2o+, K9o+, Q9o+, J9o+, T9o',
+    label: 'SB オープン (約 42%)',
+    notation: '22+, A2s+, K5s+, Q7s+, J7s+, T7s+, 96s+, 86s+, 75s+, 64s+, 54s, A2o+, K9o+, Q9o+, J9o+, T9o',
   },
-  BB_DEF_VS_BTN: {
-    label: 'BB ディフェンス vs BTN (約 55%)',
-    notation: '22+, A2s+, K2s+, Q4s+, J6s+, T7s+, 97s+, 86s+, 75s+, 64s+, 53s+, A2o+, K7o+, Q8o+, J8o+, T8o+, 97o+, 87o, 76o',
-  },
+  // BB defend = CALL portion only (SRP). 3bet hands removed.
   BB_DEF_VS_UTG: {
-    label: 'BB ディフェンス vs UTG (約 20%)',
-    notation: '22+, A8s+, K9s+, Q9s+, JTs, T9s, 98s, ATo+, KTo+, QJo',
+    label: 'BB コール vs UTG (約 24%)',
+    notation: '22-99, A2s-A9s, K9s-KJs, Q9s-QJs, J9s-JTs, T8s-T9s, 97s+, 86s+, 75s+, 65s, 54s, A9o-AJo, KTo-KJo, QTo+, JTo',
+  },
+  BB_DEF_VS_HJ: {
+    label: 'BB コール vs HJ (約 28%)',
+    notation: '22-TT, A2s-AJs, K7s-KJs, Q8s-QJs, J8s-JTs, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A8o-AJo, KTo+, QTo+, JTo, T9o',
   },
   BB_DEF_VS_CO: {
-    label: 'BB ディフェンス vs CO (約 40%)',
-    notation: '22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 97s+, 86s+, 76s, 65s, A5o+, K9o+, Q9o+, JTo, T9o',
+    label: 'BB コール vs CO (約 34%)',
+    notation: '22-JJ, A2s-AJs, K5s-KJs, Q7s-QJs, J7s-JTs, T7s+, 96s+, 86s+, 75s+, 64s+, 54s, A5o-AJo, K9o+, Q9o+, J9o+, T9o, 98o',
+  },
+  BB_DEF_VS_BTN: {
+    label: 'BB コール vs BTN (約 47%)',
+    notation: '22-JJ, A2s-AJs, K2s-KJs, Q4s-QJs, J6s-JTs, T6s+, 96s+, 85s+, 74s+, 64s+, 53s+, 43s, A2o-AJo, K7o+, Q8o+, J8o+, T8o+, 97o+, 87o, 76o',
+  },
+  BB_DEF_VS_SB: {
+    label: 'BB コール vs SB (約 55%)',
+    notation: '22-TT, A2s-ATs, K2s-KJs, Q2s-QJs, J4s-JTs, T5s+, 95s+, 84s+, 74s+, 63s+, 53s+, 43s, A2o-ATo, K5o+, Q7o+, J7o+, T7o+, 97o+, 86o+, 76o, 65o',
   },
 };
 
